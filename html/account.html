@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Farmer Account</title>
+    <style>
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            padding: 2rem 3rem;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+            display: block;
+            color: #555;
+        }
+
+        button {
+            background: #4CAF50;
+            color: #fff;
+            padding: 0.85rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            background: #45a049;
+            transform: scale(1.02);
+        }
+
+        .success {
+            color: #4CAF50;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .error {
+            color: #e53935;
+            font-weight: 500;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create Farmer Account</h2>
+        <form id="farmerForm">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" required>
+
+            <label for="fatherName">Father Name</label>
+            <input type="text" id="fatherName" name="fatherName" required>
+
+            <label for="dob">Date of Birth</label>
+            <input type="date" id="dob" name="dob" required>
+
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender" required>
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="mobile">Mobile</label>
+            <input type="text" id="mobile" name="mobile" required>
+
+            <label for="altMobile">Alternate Mobile</label>
+            <input type="text" id="altMobile" name="altMobile">
+
+            <label for="aadharNo">Aadhar Number</label>
+            <input type="text" id="aadharNo" name="aadharNo">
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email">
+
+            <label for="address">Address</label>
+            <textarea id="address" name="address" rows="2"></textarea>
+
+            <label for="village">Village</label>
+            <input type="text" id="village" name="village">
+
+            <label for="taluk">Taluk</label>
+            <input type="text" id="taluk" name="taluk">
+
+            <label for="district">District</label>
+            <input type="text" id="district" name="district">
+
+            <label for="state">State</label>
+            <input type="text" id="state" name="state">
+
+            <button type="submit">Create Farmer</button>
+
+            <p class="success" id="successMsg"></p>
+            <p class="error" id="errorMsg"></p>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('farmerForm');
+        const successMsg = document.getElementById('successMsg');
+        const errorMsg = document.getElementById('errorMsg');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            successMsg.textContent = '';
+            errorMsg.textContent = '';
+
+            const farmerData = {
+                fullName: document.getElementById('fullName').value,
+                fatherName: document.getElementById('fatherName').value,
+                dob: document.getElementById('dob').value,
+                gender: document.getElementById('gender').value,
+                mobile: document.getElementById('mobile').value,
+                altMobile: document.getElementById('altMobile').value,
+                aadharNo: document.getElementById('aadharNo').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                village: document.getElementById('village').value,
+                taluk: document.getElementById('taluk').value,
+                district: document.getElementById('district').value,
+                state: document.getElementById('state').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:8080/farmer/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(farmerData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    successMsg.textContent = `Farmer created successfully! ID: ${data.farmerId}`;
+                    form.reset();
+                } else {
+                    const error = await response.text();
+                    errorMsg.textContent = `Error: ${error}`;
+                }
+            } catch (err) {
+                errorMsg.textContent = `Error: ${err.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
